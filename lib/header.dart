@@ -1,14 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Header extends StatelessWidget {
-  final String title;
-  final VoidCallback onSettingsPressed;
-
-  const Header({
-    super.key,
-    required this.title,
-    required this.onSettingsPressed,
-  });
+  const Header({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,9 +10,9 @@ class Header extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            title,
-            style: const TextStyle(
+          const Text(
+            'Morse Mate', // hardcoded title
+            style: TextStyle(
               color: Colors.white,
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -27,7 +20,9 @@ class Header extends StatelessWidget {
           ),
           IconButton(
             icon: const Icon(Icons.settings, color: Colors.white),
-            onPressed: onSettingsPressed,
+            onPressed: () {
+              // TODO: Settings functionality
+            },
           ),
         ],
       ),

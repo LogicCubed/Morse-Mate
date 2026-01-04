@@ -1,17 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:morse_mate/morse_service.dart';
 
-class BeepButton extends StatelessWidget {
-  const BeepButton({super.key});
+class BuzzButton extends StatelessWidget {
+  final MorseService morseService;
+  final String morseText;
+
+  const BuzzButton({
+    super.key,
+    required this.morseService,
+    required this.morseText,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16),
       child: SizedBox(
         width: double.infinity,
         child: ElevatedButton(
           onPressed: () {
-            // TODO: Beep Feature
+            morseService.vibrateMorse(morseText);
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color.fromARGB(255, 44, 42, 50),
@@ -20,17 +28,13 @@ class BeepButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
           ),
-          child: Row(
+          child: const Row(
             mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              Icon(
-                Icons.graphic_eq,
-                color: Colors.white,
-              ),
+            children: [
+              Icon(Icons.vibration, color: Colors.white),
               SizedBox(width: 8),
               Text(
-                'BEEP',
+                'BUZZ',
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,

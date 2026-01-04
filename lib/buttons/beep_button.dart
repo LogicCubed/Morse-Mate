@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:vibration/vibration.dart';
+import 'package:morse_mate/morse_service.dart';
 
-class BuzzButton extends StatelessWidget {
-  const BuzzButton({super.key});
+class BeepButton extends StatelessWidget {
+  final MorseService morseService;
+  final String morseText;
+
+  const BeepButton({
+    super.key,
+    required this.morseService,
+    required this.morseText,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -12,8 +19,7 @@ class BuzzButton extends StatelessWidget {
         width: double.infinity,
         child: ElevatedButton(
           onPressed: () {
-            // TODO: Buzz Feature
-            Vibration.vibrate(duration: 200);
+            morseService.beepMorse(morseText);
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color.fromARGB(255, 44, 42, 50),
@@ -27,12 +33,12 @@ class BuzzButton extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: const [
               Icon(
-                Icons.vibration,
+                Icons.graphic_eq,
                 color: Colors.white,
               ),
               SizedBox(width: 8),
               Text(
-                'BUZZ',
+                'BEEP',
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
