@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:morse_mate/morse_service.dart';
 
 class FlashButton extends StatelessWidget {
-  const FlashButton({super.key});
+  final MorseService morseService;
+  final String morseText;
+
+  const FlashButton({
+    super.key,
+    required this.morseService,
+    required this.morseText,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +19,7 @@ class FlashButton extends StatelessWidget {
         width: double.infinity,
         child: ElevatedButton(
           onPressed: () {
-            // TODO: Flash Feature
+            morseService.flashMorse(morseText);
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color.fromARGB(255, 44, 42, 50),

@@ -45,7 +45,10 @@ class _HomePageState extends State<HomePage> {
               morseService: morseService,
               morseText: morseOutput,
             ),
-            const FlashButton(),
+            FlashButton(
+              morseService: morseService,
+              morseText: morseOutput,
+            ),
           ],
         ),
       ),

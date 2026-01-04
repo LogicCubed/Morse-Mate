@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:vibration/vibration.dart';
+import 'package:torch_light/torch_light.dart';
 
 class MorseService {
   static const Map<String, String> _morseMap = {
@@ -114,6 +115,31 @@ class MorseService {
           break;
         case '-':
           await Vibration.vibrate(duration: dash, amplitude: amplitude);
+          await Future.delayed(const Duration(milliseconds: symbolGap));
+          break;
+        case ' ':
+          await Future.delayed(const Duration(milliseconds: letterGap));
+          break;
+        case '/':
+          await Future.delayed(const Duration(milliseconds: wordGap));
+          break;
+      }
+    }
+  }
+
+  Future<void> flashMorse(String morse) async {
+    for (final char in morse.split('')) {
+      switch (char) {
+        case '.':
+          await TorchLight.enableTorch();
+          await Future.delayed(const Duration(milliseconds: dot));
+          await TorchLight.disableTorch();
+          await Future.delayed(const Duration(milliseconds: symbolGap));
+          break;
+        case '-':
+          await TorchLight.enableTorch();
+          await Future.delayed(const Duration(milliseconds: dash));
+          await TorchLight.disableTorch();
           await Future.delayed(const Duration(milliseconds: symbolGap));
           break;
         case ' ':
