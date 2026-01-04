@@ -1,15 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:morse_mate/morse_service.dart';
 
-class BuzzButton extends StatelessWidget {
+class BuzzButton extends StatefulWidget {
   final MorseService morseService;
   final String morseText;
+  final bool loop;
 
   const BuzzButton({
     super.key,
     required this.morseService,
     required this.morseText,
+    this.loop = false,
   });
+
+  @override
+  State<BuzzButton> createState() => _BuzzButtonState();
+}
+
+class _BuzzButtonState extends State<BuzzButton> {
+  bool _isPlaying = false;
+
+  Future<void> buzzMorse() async {
+    if (_isPlaying || widget.morseText.isEmpty) return;
+    setState(() => _isPlaying = true);
+
+    await widget.morseService.vibrateMorse(widget.morseText);
+
+    setState(() => _isPlaying = false);
+
+    if (widget.loop) {
+      await Future.delayed(const Duration(milliseconds: 1500));
+      buzzMorse();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +41,7 @@ class BuzzButton extends StatelessWidget {
       child: SizedBox(
         width: double.infinity,
         child: ElevatedButton(
-          onPressed: () {
-            morseService.vibrateMorse(morseText);
-          },
+          onPressed: buzzMorse,
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color.fromARGB(255, 44, 42, 50),
             padding: const EdgeInsets.symmetric(vertical: 16),
@@ -28,15 +49,23 @@ class BuzzButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
           ),
-          child: const Row(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.vibration, color: Colors.white),
-              SizedBox(width: 8),
+              Icon(
+                Icons.vibration,
+                  color: _isPlaying
+                    ? const Color.fromARGB(255, 111, 255, 89)
+                    : Colors.white,
+              ),
+              const SizedBox(width: 8),
               Text(
-                'BUZZ',
+                _isPlaying ? 'PLAYING...' : 'BEEP',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: _isPlaying
+                    ? const Color.fromARGB(255, 111, 255, 89)
+                    : Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
                 ),

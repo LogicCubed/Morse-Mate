@@ -1,15 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:morse_mate/morse_service.dart';
 
-class BeepButton extends StatelessWidget {
+class BeepButton extends StatefulWidget {
   final MorseService morseService;
   final String morseText;
+  final bool loop;
 
   const BeepButton({
     super.key,
     required this.morseService,
     required this.morseText,
+    this.loop = false,
   });
+
+  @override
+  State<BeepButton> createState() => _BeepButtonState();
+}
+
+class _BeepButtonState extends State<BeepButton> {
+  bool _isPlaying = false;
+
+  Future<void> playMorse() async {
+    if (_isPlaying || widget.morseText.isEmpty) return;
+    setState(() => _isPlaying = true);
+
+    await widget.morseService.beepMorse(widget.morseText);
+
+    setState(() => _isPlaying = false);
+
+    if (widget.loop) {
+      await Future.delayed(const Duration(milliseconds: 1500));
+      playMorse();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +41,7 @@ class BeepButton extends StatelessWidget {
       child: SizedBox(
         width: double.infinity,
         child: ElevatedButton(
-          onPressed: () {
-            morseService.beepMorse(morseText);
-          },
+          onPressed: playMorse,
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color.fromARGB(255, 44, 42, 50),
             padding: const EdgeInsets.symmetric(vertical: 16),
@@ -31,16 +52,20 @@ class BeepButton extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
+            children: [
               Icon(
                 Icons.graphic_eq,
-                color: Colors.white,
+                  color: _isPlaying
+                    ? const Color.fromARGB(255, 111, 255, 89)
+                    : Colors.white,
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Text(
-                'BEEP',
+                _isPlaying ? 'PLAYING...' : 'BEEP',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: _isPlaying
+                    ? const Color.fromARGB(255, 111, 255, 89)
+                    : Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
                 ),

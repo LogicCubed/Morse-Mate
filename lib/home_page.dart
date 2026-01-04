@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:morse_mate/buttons/loop_button.dart';
 import 'package:morse_mate/buttons/beep_button.dart';
 import 'package:morse_mate/buttons/buzz_button.dart';
 import 'package:morse_mate/input.dart';
@@ -19,10 +20,16 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController inputController = TextEditingController();
   String morseOutput = '';
 
+  bool isLooping = false;
+
   void convertText() {
     setState(() {
       morseOutput = morseService.textToMorse(inputController.text);
     });
+  }
+
+  void toggleLoop(bool value) {
+    setState(() => isLooping = value);
   }
 
   @override
@@ -37,17 +44,24 @@ class _HomePageState extends State<HomePage> {
             Input(controller: inputController, onChanged: (_) => convertText()),
             Output(text: morseOutput),
             const Expanded(child: SizedBox()),
+            LoopButton(
+              isLooping: isLooping,
+              onToggle: toggleLoop,
+            ),
             BeepButton(
               morseService: morseService,
               morseText: morseOutput,
+              loop: isLooping,
             ),
             BuzzButton(
               morseService: morseService,
               morseText: morseOutput,
+              loop: isLooping,
             ),
             FlashButton(
               morseService: morseService,
               morseText: morseOutput,
+              loop: isLooping,
             ),
           ],
         ),
