@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'settings_sheet.dart';
 
 class Header extends StatelessWidget {
   const Header({super.key});
@@ -11,7 +12,7 @@ class Header extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           const Text(
-            'Morse Mate', // hardcoded title
+            'Morse Mate',
             style: TextStyle(
               color: Colors.white,
               fontSize: 24,
@@ -21,7 +22,12 @@ class Header extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.settings, color: Colors.white),
             onPressed: () {
-              // TODO: Settings functionality
+              showModalBottomSheet(
+                context: context,
+                backgroundColor: Colors.transparent,
+                isScrollControlled: true,
+                builder: (_) => const SettingsSheet(),
+              );
             },
           ),
         ],

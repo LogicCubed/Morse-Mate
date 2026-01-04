@@ -61,7 +61,7 @@ class _FlashButtonState extends State<FlashButton> {
               ),
               const SizedBox(width: 8),
               Text(
-                _isPlaying ? 'PLAYING...' : 'BEEP',
+                _isPlaying ? 'PLAYING...' : 'FLASH',
                 style: TextStyle(
                   color: _isPlaying
                     ? const Color.fromARGB(255, 111, 255, 89)

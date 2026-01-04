@@ -61,7 +61,7 @@ class _BuzzButtonState extends State<BuzzButton> {
               ),
               const SizedBox(width: 8),
               Text(
-                _isPlaying ? 'PLAYING...' : 'BEEP',
+                _isPlaying ? 'PLAYING...' : 'BUZZ',
                 style: TextStyle(
                   color: _isPlaying
                     ? const Color.fromARGB(255, 111, 255, 89)

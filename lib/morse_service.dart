@@ -49,6 +49,7 @@ class MorseService {
   static const int letterGap = dot * 3;
   static const int wordGap = dot * 7;
 
+  bool shouldStop = false;
 
   String textToMorse(String text) {
     return text
@@ -76,8 +77,12 @@ class MorseService {
 
   Future<void> beepMorse(String morse) async {
     await init();
+    shouldStop = false;
 
     for (final char in morse.split('')) {
+
+      if (shouldStop) return;
+      
       switch (char) {
         case '.':
           await _player.resume();
@@ -106,8 +111,12 @@ class MorseService {
 
   Future<void> vibrateMorse(String morse) async {
     const int amplitude = 255;
+    shouldStop = false;
 
     for (final char in morse.split('')) {
+
+      if (shouldStop) return;
+
       switch (char) {
         case '.':
           await Vibration.vibrate(duration: dot, amplitude: amplitude);
@@ -128,7 +137,12 @@ class MorseService {
   }
 
   Future<void> flashMorse(String morse) async {
+    shouldStop = false;
+
     for (final char in morse.split('')) {
+
+      if (shouldStop) return;
+
       switch (char) {
         case '.':
           await TorchLight.enableTorch();
@@ -150,5 +164,13 @@ class MorseService {
           break;
       }
     }
+  }
+
+  void stopAll() {
+    shouldStop = true;
+
+    _player.stop();
+    Vibration.cancel();
+    try { TorchLight.disableTorch(); } catch (_) {}
   }
 }
