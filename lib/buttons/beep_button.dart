@@ -18,30 +18,42 @@ class BeepButton extends StatefulWidget {
 }
 
 class _BeepButtonState extends State<BeepButton> {
-  bool _isPlaying = false;
+  bool isPlaying = false;
+  bool isActiveLooping = false;
 
-  Future<void> playMorse() async {
-    if (_isPlaying || widget.morseText.isEmpty) return;
-    setState(() => _isPlaying = true);
+  Future<void> beepMorse() async {
+    if (isPlaying || widget.morseText.isEmpty) return;
+
+    setState(() {
+      isPlaying = true;
+      isActiveLooping = true;
+    });
 
     await widget.morseService.beepMorse(widget.morseText);
 
-    setState(() => _isPlaying = false);
+    setState(() => isPlaying = false);
 
-    if (widget.loop) {
+    if (widget.loop && mounted) {
       await Future.delayed(const Duration(milliseconds: 1500));
-      playMorse();
+      if (!mounted) return;
+      if (widget.loop) {
+        await beepMorse();
+      }
+    } else {
+      setState(() => isActiveLooping = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final isActive = isPlaying || isActiveLooping;
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: SizedBox(
         width: double.infinity,
         child: ElevatedButton(
-          onPressed: playMorse,
+          onPressed: beepMorse,
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color.fromARGB(255, 44, 42, 50),
             padding: const EdgeInsets.symmetric(vertical: 16),
@@ -55,17 +67,17 @@ class _BeepButtonState extends State<BeepButton> {
             children: [
               Icon(
                 Icons.graphic_eq,
-                  color: _isPlaying
+                color: isActive
                     ? const Color.fromARGB(255, 111, 255, 89)
                     : Colors.white,
               ),
               const SizedBox(width: 8),
               Text(
-                _isPlaying ? 'PLAYING...' : 'BEEP',
+                isActive ? 'PLAYING...' : 'BEEP',
                 style: TextStyle(
-                  color: _isPlaying
-                    ? const Color.fromARGB(255, 111, 255, 89)
-                    : Colors.white,
+                  color: isActive
+                      ? const Color.fromARGB(255, 111, 255, 89)
+                      : Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
                 ),

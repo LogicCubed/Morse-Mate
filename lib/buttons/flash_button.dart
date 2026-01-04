@@ -18,24 +18,36 @@ class FlashButton extends StatefulWidget {
 }
 
 class _FlashButtonState extends State<FlashButton> {
-  bool _isPlaying = false;
+  bool isPlaying = false;
+  bool isActiveLooping = false;
 
   Future<void> flashMorse() async {
-    if (_isPlaying || widget.morseText.isEmpty) return;
-    setState(() => _isPlaying = true);
+    if (isPlaying || widget.morseText.isEmpty) return;
+
+    setState(() {
+      isPlaying = true;
+      isActiveLooping = true;
+    });
 
     await widget.morseService.flashMorse(widget.morseText);
 
-    setState(() => _isPlaying = false);
+    setState(() => isPlaying = false);
 
-    if (widget.loop) {
+    if (widget.loop && mounted) {
       await Future.delayed(const Duration(milliseconds: 1500));
-      flashMorse();
+      if (!mounted) return;
+      if (widget.loop) {
+        await flashMorse(); // recurse
+      }
+    } else {
+      setState(() => isActiveLooping = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final isActive = isPlaying || isActiveLooping;
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: SizedBox(
@@ -55,17 +67,17 @@ class _FlashButtonState extends State<FlashButton> {
             children: [
               Icon(
                 Icons.lightbulb,
-                color: _isPlaying
-                  ? const Color.fromARGB(255, 111, 255, 89)
-                  : Colors.white,
+                color: isActive
+                    ? const Color.fromARGB(255, 111, 255, 89)
+                    : Colors.white,
               ),
               const SizedBox(width: 8),
               Text(
-                _isPlaying ? 'PLAYING...' : 'FLASH',
+                isActive ? 'PLAYING...' : 'FLASH',
                 style: TextStyle(
-                  color: _isPlaying
-                    ? const Color.fromARGB(255, 111, 255, 89)
-                    : Colors.white,
+                  color: isActive
+                      ? const Color.fromARGB(255, 111, 255, 89)
+                      : Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
                 ),

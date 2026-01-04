@@ -18,24 +18,35 @@ class BuzzButton extends StatefulWidget {
 }
 
 class _BuzzButtonState extends State<BuzzButton> {
-  bool _isPlaying = false;
+  bool isPlaying = false;
+  bool isActiveLooping = false;
 
   Future<void> buzzMorse() async {
-    if (_isPlaying || widget.morseText.isEmpty) return;
-    setState(() => _isPlaying = true);
+    if (isPlaying || widget.morseText.isEmpty) return;
+
+    setState(() {
+      isPlaying = true;
+      isActiveLooping = true;
+    });
 
     await widget.morseService.vibrateMorse(widget.morseText);
 
-    setState(() => _isPlaying = false);
+    setState(() => isPlaying = false);
 
-    if (widget.loop) {
+    if (widget.loop && mounted) {
       await Future.delayed(const Duration(milliseconds: 1500));
-      buzzMorse();
+      if (!mounted) return;
+
+      if (widget.loop) buzzMorse();
+    } else {
+      setState(() => isActiveLooping = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final isActive = isPlaying || isActiveLooping;
+
     return Padding(
       padding: const EdgeInsets.all(16),
       child: SizedBox(
@@ -55,17 +66,17 @@ class _BuzzButtonState extends State<BuzzButton> {
             children: [
               Icon(
                 Icons.vibration,
-                  color: _isPlaying
+                color: isActive
                     ? const Color.fromARGB(255, 111, 255, 89)
                     : Colors.white,
               ),
               const SizedBox(width: 8),
               Text(
-                _isPlaying ? 'PLAYING...' : 'BUZZ',
+                isActive ? 'PLAYING...' : 'BUZZ',
                 style: TextStyle(
-                  color: _isPlaying
-                    ? const Color.fromARGB(255, 111, 255, 89)
-                    : Colors.white,
+                  color: isActive
+                      ? const Color.fromARGB(255, 111, 255, 89)
+                      : Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
                 ),
