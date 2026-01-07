@@ -30,7 +30,7 @@ class Output extends StatelessWidget {
             },
           ),
         ),
-        maxLines: null,
+        maxLines: 1,
       ),
     );
   }

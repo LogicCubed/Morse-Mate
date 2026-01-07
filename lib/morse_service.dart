@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:vibration/vibration.dart';
 import 'package:torch_light/torch_light.dart';
+import 'package:morse_mate/settings/settings.dart';
 
 class MorseService {
   static const Map<String, String> _morseMap = {
@@ -43,12 +44,6 @@ class MorseService {
     '0': '-----',
   };
 
-  static const int dot = 150;
-  static const int dash = dot * 3;
-  static const int symbolGap = dot;
-  static const int letterGap = dot * 3;
-  static const int wordGap = dot * 7;
-
   bool shouldStop = false;
 
   String textToMorse(String text) {
@@ -85,25 +80,27 @@ class MorseService {
       
       switch (char) {
         case '.':
+          await _player.setVolume(Settings.beepVolume);
           await _player.resume();
-          await Future.delayed(const Duration(milliseconds: dot));
+          await Future.delayed(Duration(milliseconds: Settings.dotMs));
           await _player.stop();
-          await Future.delayed(const Duration(milliseconds: symbolGap));
+          await Future.delayed(Duration(milliseconds: Settings.symbolGapMs));
           break;
 
         case '-':
+          await _player.setVolume(Settings.beepVolume);
           await _player.resume();
-          await Future.delayed(const Duration(milliseconds: dash));
+          await Future.delayed(Duration(milliseconds: Settings.dashMs));
           await _player.stop();
-          await Future.delayed(const Duration(milliseconds: symbolGap));
+          await Future.delayed(Duration(milliseconds: Settings.symbolGapMs));
           break;
 
         case ' ':
-          await Future.delayed(const Duration(milliseconds: letterGap));
+          await Future.delayed(Duration(milliseconds: Settings.letterGapMs));
           break;
 
         case '/':
-          await Future.delayed(const Duration(milliseconds: wordGap));
+          await Future.delayed(Duration(milliseconds: Settings.wordGapMs));
           break;
       }
     }
@@ -119,18 +116,24 @@ class MorseService {
 
       switch (char) {
         case '.':
-          await Vibration.vibrate(duration: dot, amplitude: amplitude);
-          await Future.delayed(const Duration(milliseconds: symbolGap));
+          await Vibration.vibrate(
+            duration: Settings.dotMs,
+            amplitude: amplitude,
+          );
+          await Future.delayed(Duration(milliseconds: Settings.symbolGapMs));
           break;
         case '-':
-          await Vibration.vibrate(duration: dash, amplitude: amplitude);
-          await Future.delayed(const Duration(milliseconds: symbolGap));
+          await Vibration.vibrate(
+            duration: Settings.dashMs,
+            amplitude: amplitude,
+          );
+          await Future.delayed(Duration(milliseconds: Settings.symbolGapMs));
           break;
         case ' ':
-          await Future.delayed(const Duration(milliseconds: letterGap));
+          await Future.delayed(Duration(milliseconds: Settings.letterGapMs));
           break;
         case '/':
-          await Future.delayed(const Duration(milliseconds: wordGap));
+          await Future.delayed(Duration(milliseconds: Settings.wordGapMs));
           break;
       }
     }
@@ -146,21 +149,21 @@ class MorseService {
       switch (char) {
         case '.':
           await TorchLight.enableTorch();
-          await Future.delayed(const Duration(milliseconds: dot));
+          await Future.delayed(Duration(milliseconds: Settings.dotMs));
           await TorchLight.disableTorch();
-          await Future.delayed(const Duration(milliseconds: symbolGap));
+          await Future.delayed(Duration(milliseconds: Settings.symbolGapMs));
           break;
         case '-':
           await TorchLight.enableTorch();
-          await Future.delayed(const Duration(milliseconds: dash));
+          await Future.delayed(Duration(milliseconds: Settings.dashMs));
           await TorchLight.disableTorch();
-          await Future.delayed(const Duration(milliseconds: symbolGap));
+          await Future.delayed(Duration(milliseconds: Settings.symbolGapMs));
           break;
         case ' ':
-          await Future.delayed(const Duration(milliseconds: letterGap));
+          await Future.delayed(Duration(milliseconds: Settings.letterGapMs));
           break;
         case '/':
-          await Future.delayed(const Duration(milliseconds: wordGap));
+          await Future.delayed(Duration(milliseconds: Settings.wordGapMs));
           break;
       }
     }
