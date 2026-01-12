@@ -1,16 +1,12 @@
-# morse_mate
+# Morse Mate
 
-A new Flutter project.
+Morse Mate is a simple app developed in Flutter dedicated to the translation and display of messages in morse code.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Features
+- Text to Morse Code
+- Beep message
+- Buzz message
+- Flash message
+- Loop Mode
+- Stop Button
+- Adjustable timing parameters
