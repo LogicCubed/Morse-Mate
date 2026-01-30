@@ -44,13 +44,16 @@ class MorseService {
     '0': '-----',
   };
 
+  static final Map<String, String> _reverseMorseMap =
+      _morseMap.map((k, v) => MapEntry(v, k));
+
   bool shouldStop = false;
 
   String textToMorse(String text) {
     return text
         .toUpperCase()
         .trim()
-        .split(' ')
+        .split(RegExp(r'\s+'))
         .map((word) => word
             .split('')
             .map((c) => _morseMap[c] ?? '')
@@ -59,7 +62,41 @@ class MorseService {
         .join(' / ');
   }
 
-    final AudioPlayer _player = AudioPlayer()
+  String morseToText(String morse) {
+    return morse
+        .trim()
+        .split('/')
+        .map((word) => word
+            .trim()
+            .split(RegExp(r'\s+'))
+            .map((symbol) => _reverseMorseMap[symbol] ?? '')
+            .join())
+        .join(' ');
+  }
+
+  String translate(String input) {
+    final trimmed = input.trim();
+    if (trimmed.isEmpty) return '';
+
+    bool hasDotOrDash = false;
+
+    for (final c in trimmed.split('')) {
+      if (c == '.' || c == '-') {
+        hasDotOrDash = true;
+        continue;
+      }
+      if (c == ' ' || c == '/') continue;
+      return textToMorse(input);
+    }
+
+    if (!hasDotOrDash) {
+      return textToMorse(input);
+    }
+
+    return morseToText(input);
+  }
+
+  final AudioPlayer _player = AudioPlayer()
     ..setReleaseMode(ReleaseMode.stop);
 
   bool _initialized = false;
@@ -75,9 +112,8 @@ class MorseService {
     shouldStop = false;
 
     for (final char in morse.split('')) {
-
       if (shouldStop) return;
-      
+
       switch (char) {
         case '.':
           await _player.setVolume(Settings.beepVolume);
@@ -86,7 +122,6 @@ class MorseService {
           await _player.stop();
           await Future.delayed(Duration(milliseconds: Settings.symbolGapMs));
           break;
-
         case '-':
           await _player.setVolume(Settings.beepVolume);
           await _player.resume();
@@ -94,11 +129,9 @@ class MorseService {
           await _player.stop();
           await Future.delayed(Duration(milliseconds: Settings.symbolGapMs));
           break;
-
         case ' ':
           await Future.delayed(Duration(milliseconds: Settings.letterGapMs));
           break;
-
         case '/':
           await Future.delayed(Duration(milliseconds: Settings.wordGapMs));
           break;
@@ -111,7 +144,6 @@ class MorseService {
     shouldStop = false;
 
     for (final char in morse.split('')) {
-
       if (shouldStop) return;
 
       switch (char) {
@@ -143,7 +175,6 @@ class MorseService {
     shouldStop = false;
 
     for (final char in morse.split('')) {
-
       if (shouldStop) return;
 
       switch (char) {
@@ -171,9 +202,10 @@ class MorseService {
 
   void stopAll() {
     shouldStop = true;
-
     _player.stop();
     Vibration.cancel();
-    try { TorchLight.disableTorch(); } catch (_) {}
+    try {
+      TorchLight.disableTorch();
+    } catch (_) {}
   }
 }

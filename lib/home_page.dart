@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
 
   void convertText() {
     setState(() {
-      morseOutput = morseService.textToMorse(inputController.text);
+      morseOutput = morseService.translate(inputController.text);
     });
   }
 
@@ -54,7 +54,10 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             children: [
               Header(),
-              Input(controller: inputController, onChanged: (_) => convertText()),
+              Input(
+                controller: inputController,
+                onChanged: (_) => convertText(),
+              ),
               Output(text: morseOutput),
               const Expanded(child: SizedBox()),
               Padding(
